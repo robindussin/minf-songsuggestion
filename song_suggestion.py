@@ -1,5 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog
+import os
+from scipy.io import arff
+import subprocess
 
 
 amuse_path = '/home/robin/AMUSE/amuse/'
@@ -10,7 +13,6 @@ user_song_vector = []
 
 processed_feature_suffix = ''
 
-setup_gui()
 
 def open_file_dialog():
 	file_path = filedialog.askopenfilename()
@@ -20,11 +22,17 @@ def open_file_dialog():
 	
 
 def start():
+	# user_song processen
 	user_song_path = path_entry.get()
+	if user_song_path == '' or not os.path.exists(user_song_path):
+		tk.messagebox.showwarning('Ungültiger Pfad', message='Es wurde keine Datei angegeben oder die angegebene Datei existiert nicht...')
+		return
 	user_song_vector = process_user_song(user_song_path)
+	
+	# Distanz des user_songs zu allen anderen Songs berechnen
 	all_distances = compare_all_songs()
 	
-	pass
+	display_results(all_distances)
 	
 	
 # Processe user_song und gebe Feature-Vektor zurück
@@ -53,24 +61,25 @@ def display_result(result_list):
 	pass
 
 	
-def setup_gui():
-	root = tk.Tk(className="Song Suggestions")
-	root.geometry("600x400")
+	
+# GUI Setup
+root = tk.Tk(className="Song Suggestions")
+root.geometry("600x400")
 
-	select_song_button = tk.Button(root, text="Select a song you like", command=open_file_dialog)
-	select_song_button.pack()
+select_song_button = tk.Button(root, text="Select a song you like", command=open_file_dialog)
+select_song_button.pack()
 
-	path_entry = tk.Entry(root)
-	path_entry.pack()
+path_entry = tk.Entry(root)
+path_entry.pack()
 
-	button_start = tk.Button(root, text="Start", command=start)
-	button_start.pack()
+button_start = tk.Button(root, text="Start", command=start)
+button_start.pack()
 
-	listbox = tk.Listbox(root)
-	listbox.pack()
+listbox = tk.Listbox(root)
+listbox.pack()
 
-	root.mainloop()
+root.mainloop()
 
 
-
+subprocess.call(['sh', './amuseStartLoop.sh'])
 
