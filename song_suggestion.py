@@ -59,6 +59,10 @@ def compare_song(path):
 	
 def display_result(result_list):
 	pass
+	
+
+def generate_task_files():
+	pass
 
 	
 	

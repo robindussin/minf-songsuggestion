@@ -9,7 +9,7 @@ def get_song_name(filename):
 	
 	
 path = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features/Genres-Datensatz/'
-processing_suffix = '_1-9__0[true_true]__-1ms_-1ms_distanceTest02.arff'
+processing_suffix = '_1-9__0[true_true]__-1ms_-1ms_distanceTests04.arff'
 
 files = []
 for genre in os.listdir(path):
@@ -29,8 +29,13 @@ for arff_file in files:
 for index1, arff_file1 in enumerate(data):
 	for index2, arff_file2 in enumerate(data):
 		if index2 > index1:
-			distance = np.linalg.norm(arff_file1 - arff_file2)
-			print(get_song_name(files[index1]), ' vs. ', get_song_name(files[index2]), ': ', str(distance))
+			distanceEuklid = np.linalg.norm(arff_file1 - arff_file2)
+			distanceManhatten = np.abs(arff_file1 - arff_file2).sum()
+			distanceCosine = 1 - np.dot(arff_file1, arff_file2) / (np.linalg.norm(arff_file1) * np.linalg.norm(arff_file2))
+			print(get_song_name(files[index1]), ' vs. ', get_song_name(files[index2]))
+			print('\tEuklid:', str(distanceEuklid))
+			print('\tManhatten:', str(distanceManhatten))
+			print('\tCosinus:', str(distanceCosine))
 
 """
 data1, meta1 = arff.loadarff(path + file1)
