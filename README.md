@@ -17,4 +17,5 @@
   - [ ] Playlisten generieren
   - [ ] TASK-Dateien generieren
   - [x] Distanzen berechnen     
+  - [ ] Features optimieren
       
