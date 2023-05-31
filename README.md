@@ -1,2 +1,2 @@
 ### ToDo-Liste
-- GUI
+- [] GUI
