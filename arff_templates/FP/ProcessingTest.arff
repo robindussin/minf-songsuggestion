@@ -1,0 +1,14 @@
+@RELATION ProcessorConfig
+
+@ATTRIBUTE 'FileList' STRING
+@ATTRIBUTE 'InputSourceType' {'RAW_FEATURE_LIST','PROCESSING_CONFIG'}
+@ATTRIBUTE 'Input' STRING
+@ATTRIBUTE 'ReductionSteps' STRING
+@ATTRIBUTE 'Unit' {'MILLISECONDS','SAMPLES'}
+@ATTRIBUTE 'AggregationWindowSize' NUMERIC
+@ATTRIBUTE 'AggregationWindowStepSize' NUMERIC
+@ATTRIBUTE 'MatrixToVectorMethod' STRING
+@ATTRIBUTE 'FeatureDescription' STRING
+
+@DATA
+'/home/robin/AMUSE/amuse/experiments/FP/filelists/ProcessingTest.arff','RAW_FEATURE_LIST','/home/robin/AMUSE/amuse/experiments/FP/featurelists/ProcessingTest.arff','1-9','MILLISECONDS',-1,-1,'0[true_true]','TestProcessing'

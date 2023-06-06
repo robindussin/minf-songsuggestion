@@ -1,0 +1,12 @@
+@RELATION FeatureTable
+
+@ATTRIBUTE 'Id' STRING
+@ATTRIBUTE 'Description' STRING
+@ATTRIBUTE 'ExtractorId' NUMERIC
+@ATTRIBUTE 'WindowSize' NUMERIC
+@ATTRIBUTE 'StepSize' NUMERIC
+@ATTRIBUTE 'Dimensions' NUMERIC
+@ATTRIBUTE 'FeatureType' {'WindowedNumeric'}
+
+@DATA
+'14','Spectral centroid',1,512,512,1,'WindowedNumeric'
