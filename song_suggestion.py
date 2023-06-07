@@ -38,7 +38,9 @@ def get_song_name(filename):
 	path, filename = os.path.split(filename)
 	filename = filename[:-len(processing_suffix)]
 	return filename
-	
+
+def get_song_name_ignore_suffix(filename):
+	return os.path.split(filename)[1]
 	
 # Processe user_song und gebe Feature-Vektor zurück
 def process_user_song():
@@ -73,7 +75,7 @@ def process_user_song():
         
         subprocess.call(['sh', './amuseStartLoop.sh'])
 	
-        user_proc, meta = arff.loadarff('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features' + user_song_path[:-4] + '/' + get_song_name(user_song_path) + processing_suffix)
+        user_proc, meta = arff.loadarff('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features' + user_song_path[:-4] + '/' + get_song_name_ignore_suffix(user_song_path) + processing_suffix)
         user_proc = np.array(list(user_proc[0])[:-3])
 	
         return user_proc
