@@ -1,7 +1,0 @@
-@RELATION FileTable
-
-@ATTRIBUTE 'Id' NUMERIC
-@ATTRIBUTE 'Path' STRING
-
-@DATA
-1,'/home/robin/Musik/Genres-Datensatz-15s/Jazz/Bernadette_Seacrest_and_the_Yes_Men-Sweet_Salvation.wav'

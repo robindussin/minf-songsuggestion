@@ -1,0 +1,7 @@
+@RELATION ExtractorConfig
+
+@ATTRIBUTE 'MusicFileList' STRING
+@ATTRIBUTE 'FeatureTable' STRING
+
+@DATA
+'/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/arff_infos/ExtractionTestFile.arff','/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/arff_infos/ExtractionTestFeatures.arff'

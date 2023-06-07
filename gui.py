@@ -1,17 +1,18 @@
-import tkinter as tk
 import customtkinter
+from tkinter import filedialog
 import os
 from PIL import Image
 from time import strftime
 from datetime import date
 import scrollableFrame
+import song_suggestion
 
 
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
-    #------------------ Allgemeine Settings ------------------#
+        #------------------ Allgemeine Settings ------------------#
 
         self.title("2.Teilprojekt")
         self.geometry("800x400")
@@ -24,7 +25,7 @@ class App(customtkinter.CTk):
 
 
 
-    #------------------ Frames -------------------------#
+        #------------------ Frames -------------------------#
 
 
         #--------------- SelectionFrame ----------------#
@@ -63,12 +64,10 @@ class App(customtkinter.CTk):
 #----------------------- methods ---------------------------------#
 
     def open_file_dialog(self):
-        file_path = customtkinter.filedialog.askopenfilename()
-        customtkinter.path_entry.delete(0, tk.END)
-        customtkinter.path_entry.insert(tk.END, file_path)
+        self.file_path = filedialog.askopenfilename(initialdir = '/home/dussin/Downloads')
 
     def buttonEvent(self):
-        print("Pressed Button")
+        song_suggestion.start(self.file_path)
 
 
 

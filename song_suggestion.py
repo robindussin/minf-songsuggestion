@@ -3,6 +3,7 @@ from tkinter import filedialog
 import os
 from scipy.io import arff
 import subprocess
+import shutil
 
 
 amuse_path = '/home/robin/AMUSE/amuse/'
@@ -13,77 +14,112 @@ user_song_vector = []
 
 processed_feature_suffix = ''
 
+	
+def start(song_path):
 
-def open_file_dialog():
-	file_path = filedialog.askopenfilename()
-	path_entry.delete(0, tk.END)
-	path_entry.insert(tk.END, file_path)
-	
-	
+        global processing_suffix
+        processing_suffix = '_1-9__0[true_true]__-1ms_-1ms_songsuggestion_processing.arff'
 
-def start():
-	# user_song processen
-	user_song_path = path_entry.get()
-	if user_song_path == '' or not os.path.exists(user_song_path):
-		tk.messagebox.showwarning('Ungültiger Pfad', message='Es wurde keine Datei angegeben oder die angegebene Datei existiert nicht...')
-		return
-	user_song_vector = process_user_song(user_song_path)
+        # user_song processen
+        global user_song_path
+        user_song_path = song_path
+        if user_song_path == '' or not os.path.exists(user_song_path):
+                tk.messagebox.showwarning('Ungültiger Pfad', message='Es wurde keine Datei angegeben oder die angegebene Datei existiert nicht...')
+                return
+        user_song_vector = process_user_song()
+
+        # Distanz des user_songs zu allen anderen Songs berechnen
+        all_distances = compare_all_songs(user_song_vector)
+
+        display_result(all_distances)
 	
-	# Distanz des user_songs zu allen anderen Songs berechnen
-	all_distances = compare_all_songs()
 	
-	display_results(all_distances)
+def get_song_name(filename):
+	path, filename = os.path.split(filename)
+	filename = filename[:-len(processing_suffix)]
+	return filename
 	
 	
 # Processe user_song und gebe Feature-Vektor zurück
 def process_user_song():
 	# Vergleichs-Song Features extrahieren
+        templates = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/arff_templates/'
+        tasks = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/tasks_dir/'
+        infos = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/arff_infos/'
+        
+        extraction_list = []
+        extraction_file_list = open(infos + 'ExtractionTestFile.arff', 'r')
+        extraction_list = extraction_file_list.readlines()[:-1]
+        extraction_list.append('1, \'' + user_song_path + '\'')
+        extraction_file_list.close()
+        
+        extraction_file_list = open(infos + 'ExtractionTestFile.arff', 'w')
+        for line in extraction_list:
+                extraction_file_list.write(line)
+        extraction_file_list.close()
+        
+        processing_file_list = open(infos + 'ProcessingTestFile.arff', 'r')
+        processing_list = processing_file_list.readlines()[:-1]
+        processing_list.append('1, \'' + user_song_path + '\'')
+        processing_file_list.close()
+        
+        processing_file_list = open(infos + 'ProcessingTestFile.arff', 'w')
+        for line in processing_list:
+                processing_file_list.write(line)
+        processing_file_list.close()
+        
+        shutil.copyfile(templates + 'taskExtraction', tasks + 'taskExtraction')
+        shutil.copyfile(templates + 'taskProcessing', tasks + 'taskProcessing')
+        
+        subprocess.call(['sh', './amuseStartLoop.sh'])
 	
-	# Vergleichs-Song Features processen
-	pass
+        user_proc, meta = arff.loadarff('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features' + user_song_path[:-4] + '/' + get_song_name(user_song_path) + processing_suffix)
+        user_proc = np.array(list(user_proc[0])[:-3])
+	
+        return user_proc
 	
 	
 # Gebe Liste von Tupeln (Song-Pfad, Distanz) zurück
 # z.B. [("Jazz/xyz.wav", 0.35), ("Blues/abc.wav", 0.2)]
-def compare_all_songs():
+def compare_all_songs(user_song):
 	# berechne Distanz für alle vorliegenden Songs
+	song_data, song_names = load_processings()
 	
-	# sortiere Liste nach Distanzen
-	pass
-	
-	
+	for i in range(len(song_data)):
+                distanceEuklid = np.linalg.norm(user_song - song_data[i])
+                print('Distanz ' + get_song_name(song_names[i]) + ': ' + distanceEuklid)
+
+def load_processings():
+        	
+        path = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features/Genres-Datensatz/'
+
+        files = []
+        for genre in os.listdir(path):
+	        genre_path = os.path.join(path, genre)
+	        for song_folder in os.listdir(genre_path):
+		        files.append(os.path.join(genre_path, song_folder, song_folder + processing_suffix))
+
+        for arff_file in files:
+	        assert os.path.exists(arff_file)
+
+        data = []
+        for arff_file in files:
+                processed_feature, meta = arff.loadarff(arff_file)
+                processed_feature = np.array(list(processed_feature[0])[:-3])
+                data.append(processed_feature)
+	        
+        return (files, data)
+
 # Gebe Distanz zwischen Song in path und user_song zurück
 def compare_song(path):
 	pass
-	
-	
+
+
 def display_result(result_list):
-	pass
-	
+	print("display results")
+
 
 def generate_task_files():
 	pass
 
-	
-	
-# GUI Setup
-root = tk.Tk(className="Song Suggestions")
-root.geometry("600x400")
-
-select_song_button = tk.Button(root, text="Select a song you like", command=open_file_dialog)
-select_song_button.pack()
-
-path_entry = tk.Entry(root)
-path_entry.pack()
-
-button_start = tk.Button(root, text="Start", command=start)
-button_start.pack()
-
-listbox = tk.Listbox(root)
-listbox.pack()
-
-root.mainloop()
-
-
-subprocess.call(['sh', './amuseStartLoop.sh'])
 
