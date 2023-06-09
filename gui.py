@@ -1,11 +1,19 @@
+<<<<<<< HEAD
 import tkinter
+=======
+>>>>>>> 6e0b7f78f651b2d71a810fd0e6c0dd941133a249
 import customtkinter
+from tkinter import filedialog
 import os
 from PIL import Image
 from time import strftime
 from datetime import date
 import scrollableFrame
+<<<<<<< HEAD
 import pygame
+=======
+import song_suggestion
+>>>>>>> 6e0b7f78f651b2d71a810fd0e6c0dd941133a249
 
 
 
@@ -15,9 +23,13 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
+<<<<<<< HEAD
 
 
     #------------------ Allgemeine Settings ------------------#
+=======
+        #------------------ Allgemeine Settings ------------------#
+>>>>>>> 6e0b7f78f651b2d71a810fd0e6c0dd941133a249
 
         self.title("2.Teilprojekt")
         self.geometry("800x400")
@@ -30,7 +42,7 @@ class App(customtkinter.CTk):
 
 
 
-    #------------------ Frames -------------------------#
+        #------------------ Frames -------------------------#
 
 
         #--------------- SelectionFrame ----------------#
@@ -74,12 +86,16 @@ class App(customtkinter.CTk):
 #----------------------- methods ---------------------------------#
 
     def open_file_dialog(self):
+<<<<<<< HEAD
         file_path = tkinter.filedialog.askopenfilename()
         tkinter.path_entry.delete(0, tkinter.END)
         tkinter.path_entry.insert(tkinter.END, file_path)
+=======
+        self.file_path = filedialog.askopenfilename(initialdir = '/home/dussin/Downloads')
+>>>>>>> 6e0b7f78f651b2d71a810fd0e6c0dd941133a249
 
     def buttonEvent(self):
-        print("Pressed Button")
+        song_suggestion.start(self.file_path)
 
 
 
