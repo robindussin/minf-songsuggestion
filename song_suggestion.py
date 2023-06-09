@@ -4,6 +4,7 @@ import os
 from scipy.io import arff
 import subprocess
 import shutil
+import numpy as np
 
 
 amuse_path = '/home/robin/AMUSE/amuse/'
@@ -41,6 +42,9 @@ def get_song_name(filename):
 
 def get_song_name_ignore_suffix(filename):
 	return os.path.split(filename)[1]
+ 
+def get_genre(filename):
+        return os.path.split(os.path.split(os.path.split(filename)[0])[0])[1]
 	
 # Processe user_song und gebe Feature-Vektor zurück
 def process_user_song():
@@ -75,7 +79,7 @@ def process_user_song():
         
         subprocess.call(['sh', './amuseStartLoop.sh'])
 	
-        user_proc, meta = arff.loadarff('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features' + user_song_path[:-4] + '/' + get_song_name_ignore_suffix(user_song_path) + processing_suffix)
+        user_proc, meta = arff.loadarff('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features' + user_song_path[:-4] + '/' + get_song_name_ignore_suffix(user_song_path)[:-4] + processing_suffix)
         user_proc = np.array(list(user_proc[0])[:-3])
 	
         return user_proc
@@ -84,25 +88,29 @@ def process_user_song():
 # Gebe Liste von Tupeln (Song-Pfad, Distanz) zurück
 # z.B. [("Jazz/xyz.wav", 0.35), ("Blues/abc.wav", 0.2)]
 def compare_all_songs(user_song):
-	# berechne Distanz für alle vorliegenden Songs
-	song_data, song_names = load_processings()
-	
-	for i in range(len(song_data)):
+        # berechne Distanz für alle vorliegenden Songs
+        song_names, song_data = load_processings()	
+
+        distances = []
+
+        for i in range(len(song_data)):
                 distanceEuklid = np.linalg.norm(user_song - song_data[i])
-                print('Distanz ' + get_song_name(song_names[i]) + ': ' + distanceEuklid)
+                distances.append((get_genre(song_names[i]), get_song_name(song_names[i]), distanceEuklid))
+        
+        distances = sorted(distances, key = lambda tup: tup[2])
+        return distances
 
 def load_processings():
         	
-        path = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features/Genres-Datensatz/'
+        path = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features/Genres-Datensatz-15s/'
 
         files = []
         for genre in os.listdir(path):
 	        genre_path = os.path.join(path, genre)
 	        for song_folder in os.listdir(genre_path):
-		        files.append(os.path.join(genre_path, song_folder, song_folder + processing_suffix))
-
-        for arff_file in files:
-	        assert os.path.exists(arff_file)
+                        song_path = os.path.join(genre_path, song_folder, song_folder + processing_suffix)
+                        if os.path.exists(song_path):
+                                files.append(song_path)
 
         data = []
         for arff_file in files:
@@ -118,7 +126,8 @@ def compare_song(path):
 
 
 def display_result(result_list):
-	print("display results")
+        for distance in result_list:
+                print(distance[0], '-', distance[1], ':', str(distance[2]))
 
 
 def generate_task_files():
