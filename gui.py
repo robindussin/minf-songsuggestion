@@ -1,7 +1,7 @@
-<<<<<<< HEAD
+
 import tkinter
-=======
->>>>>>> 6e0b7f78f651b2d71a810fd0e6c0dd941133a249
+
+
 import customtkinter
 from tkinter import filedialog
 import os
@@ -9,11 +9,10 @@ from PIL import Image
 from time import strftime
 from datetime import date
 import scrollableFrame
-<<<<<<< HEAD
 import pygame
-=======
+
 import song_suggestion
->>>>>>> 6e0b7f78f651b2d71a810fd0e6c0dd941133a249
+
 
 
 
@@ -23,13 +22,7 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
-<<<<<<< HEAD
-
-
-    #------------------ Allgemeine Settings ------------------#
-=======
         #------------------ Allgemeine Settings ------------------#
->>>>>>> 6e0b7f78f651b2d71a810fd0e6c0dd941133a249
 
         self.title("2.Teilprojekt")
         self.geometry("800x400")
@@ -63,7 +56,7 @@ class App(customtkinter.CTk):
         self.selectionButton = customtkinter.CTkButton(self.selectionFrame,width=300, text="Select!",text_color="black", fg_color="transparent", hover_color="gray80", command=self.open_file_dialog)
         self.selectionButton.grid(row=1,column=0, sticky="nswe", pady=10, padx=10)
 
-        self.startButton = customtkinter.CTkButton(self.selectionFrame,width=300, text="Start!",text_color="black", fg_color="transparent", hover_color="gray80", command=self.buttonEvent)
+        self.startButton = customtkinter.CTkButton(self.selectionFrame,width=300, text="Start!",text_color="black", fg_color="transparent", hover_color="gray80", command=self.StartEvent)
         self.startButton.grid(row=2, column=0, sticky="nswe", pady=10, padx=10)
 
 
@@ -78,27 +71,31 @@ class App(customtkinter.CTk):
         self.scrollableOutput.grid(row=0, column=1, padx=10, pady=10, sticky="nswe")
 
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)))
-        for i in range(10):  # add items with images
-           self.scrollableOutput.add_item(image_play=customtkinter.CTkImage(Image.open(os.path.join(image_path, "play-button.png"))), image_pause=customtkinter.CTkImage(Image.open(os.path.join(image_path, "pause-button.png"))))
+
+        play_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "play-button.png")))
+        pause_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "pause-button.png")))
+        self.load_songs_from_playlist(play_image, pause_image)
 
 
 
 #----------------------- methods ---------------------------------#
 
     def open_file_dialog(self):
-<<<<<<< HEAD
-        file_path = tkinter.filedialog.askopenfilename()
-        tkinter.path_entry.delete(0, tkinter.END)
-        tkinter.path_entry.insert(tkinter.END, file_path)
-=======
         self.file_path = filedialog.askopenfilename(initialdir = '/home/dussin/Downloads')
->>>>>>> 6e0b7f78f651b2d71a810fd0e6c0dd941133a249
 
-    def buttonEvent(self):
+    def StartEvent(self):
         song_suggestion.start(self.file_path)
 
+    def buttonEvent(self):
+        print("test")
 
-
+    def load_songs_from_playlist(self, play_image, pause_image):
+        #self.scrollableOutput.clear_items()  # Vor dem Laden der Songs entfernen wir alle vorhandenen Elemente
+        for filename in os.listdir(playlist_path):
+            if filename.endswith(".mp3"):
+                music_path = os.path.join(playlist_path, filename)
+                print(filename)
+                self.scrollableOutput.add_item(music_path, image_play=play_image, image_pause=pause_image)
 
 
 if __name__ == "__main__":

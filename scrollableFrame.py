@@ -19,11 +19,11 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
         self.label_list = []
         self.button_list = []
 
-    def add_item(self, image_play=None, image_pause=None):
+    def add_item(self, music_path, image_play=None, image_pause=None):
         label = customtkinter.CTkLabel(self, text="music_path",padx=5, anchor="w")
 
-        play_button = customtkinter.CTkButton(self,text="", image=image_play)
-        pause_button = customtkinter.CTkButton(self, text="", image=image_pause)
+        play_button = customtkinter.CTkButton(self, text="", image=image_play, command=lambda idx=len(self.label_list) - 1: self.play_song(music_path))
+        pause_button = customtkinter.CTkButton(self, text="", image=image_pause, command=lambda idx=len(self.label_list) - 1: self.pause_song(music_path))
 
         label.grid(row=len(self.label_list), column=0, pady=(0, 10), sticky="w")
         play_button.grid(row=int(len(self.button_list)/2), column=1, pady=(0, 10), padx=5)
@@ -34,18 +34,22 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
         self.button_list.append(pause_button)
 
     def remove_item(self, item):
-        for label, button in zip(self.label_list, self.button_list):
+        for label, play_button, pause_button in zip(self.label_list, self.play_button_list, self.pause_button_list):
             if item == label.cget("text"):
                 label.destroy()
-                button.destroy()
+                play_button.destroy()
+                pause_button.destroy()
                 self.label_list.remove(label)
-                self.button_list.remove(button)
+                self.play_button_list.remove(play_button)
+                self.pause_button_list.remove(pause_button)
                 return
 
     def play_song(self, idx):
-        pygame.mixer.init()
-        pygame.mixer.music.load(f"song_{idx + 1}.mp3")
+        print(idx)
+        pygame.mixer.init()  # Konvertiere idx + 1 in einen String
+        pygame.mixer.music.load(idx)
         pygame.mixer.music.play()
+
 
     def pause_song(self, idx):
         pygame.mixer.music.pause()
