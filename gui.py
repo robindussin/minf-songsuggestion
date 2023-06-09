@@ -1,15 +1,21 @@
-import tkinter as tk
+import tkinter
 import customtkinter
 import os
 from PIL import Image
 from time import strftime
 from datetime import date
 import scrollableFrame
+import pygame
 
+
+
+playlist_path = "C:/Studium/Fachprojekt/2.Teilprojekt/minf-songsuggestion/playlist"
 
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
+
+
 
     #------------------ Allgemeine Settings ------------------#
 
@@ -59,16 +65,23 @@ class App(customtkinter.CTk):
         self.scrollableOutput = scrollableFrame.ScrollableLabelButtonFrame(master = self.outputFrame,width=435,height=360, command=self.buttonEvent, corner_radius=5, fg_color="gray90")
         self.scrollableOutput.grid(row=0, column=1, padx=10, pady=10, sticky="nswe")
 
+        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)))
+        for i in range(10):  # add items with images
+           self.scrollableOutput.add_item(image_play=customtkinter.CTkImage(Image.open(os.path.join(image_path, "play-button.png"))), image_pause=customtkinter.CTkImage(Image.open(os.path.join(image_path, "pause-button.png"))))
+
+
 
 #----------------------- methods ---------------------------------#
 
     def open_file_dialog(self):
-        file_path = customtkinter.filedialog.askopenfilename()
-        customtkinter.path_entry.delete(0, tk.END)
-        customtkinter.path_entry.insert(tk.END, file_path)
+        file_path = tkinter.filedialog.askopenfilename()
+        tkinter.path_entry.delete(0, tkinter.END)
+        tkinter.path_entry.insert(tkinter.END, file_path)
 
     def buttonEvent(self):
         print("Pressed Button")
+
+
 
 
 
