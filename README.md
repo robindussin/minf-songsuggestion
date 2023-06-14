@@ -1,21 +1,24 @@
 ### ToDo-Liste
  **GUI**
 - [ ] GUI
-  - [x] Grundstruktur   
+  - [x] Grundstruktur
+  - [ ] Progress Bar
+  - [ ] Anpassen des Outputframes
+  - [ ] Log Fenster   
   - [ ] SelectionFrame
-    - [ ] Text mit Pfad zum Lied  
-    - [ ] Buttons zum Abspielen vom Lied
+    - [x] Text mit Pfad zum Lied  
+    - [x] Buttons zum Abspielen vom Lied
   - [ ] OutputFrame
-    - [ ] ListenObjekte hinzufügen
-    - [ ] Buttons zum Abspielen der Lieder
+    - [x] ListenObjekte hinzufügen
+    - [x] Buttons zum Abspielen der Lieder
   - [ ] APP anbinden
 
 - [ ] Amuse
-  - [ ] Amuse anbinden
+  - [x] Amuse anbinden
 
 - [ ] APP
   - [ ] Playlisten generieren
-  - [ ] TASK-Dateien generieren
+  - [x] TASK-Dateien generieren
   - [x] Distanzen berechnen     
   - [ ] Features optimieren
       
