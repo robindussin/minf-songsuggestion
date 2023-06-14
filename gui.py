@@ -11,7 +11,7 @@ import pygame
 
 import song_suggestion
 
-playlist_path = "C:/Studium/Fachprojekt/2.Teilprojekt/minf-songsuggestion/playlist"
+playlist_path = "/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/playlist"
 image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 
 play_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "play-button.png")))
@@ -77,7 +77,7 @@ class App(customtkinter.CTk):
                                                                            height=320, command=self.buttonEvent,
                                                                            corner_radius=5, fg_color="gray90")
         self.scrollableOutput.grid(row=0, column=1, padx=10, pady=10, sticky="nswe")
-        self.load_songs_from_playlist(play_image, pause_image)
+        self.load_songs_from_playlist([])
 
         self.progressLabel = customtkinter.CTkLabel(self.outputFrame, text="Progress:", fg_color="white")
         self.progressLabel.grid(row=1, column=1, sticky="w", padx=10)
@@ -93,18 +93,16 @@ class App(customtkinter.CTk):
         self.musicName.configure(text="Chosen Song: " + filename)
 
     def StartEvent(self):
-        song_suggestion.start(self.filepath)
+        song_suggestion.start(self.filepath, self)
 
     def buttonEvent(self):
         print("test")
 
-    def load_songs_from_playlist(self, play_image, pause_image):
-        # self.scrollableOutput.clear_items()  # Vor dem Laden der Songs entfernen wir alle vorhandenen Elemente
-        for filename in os.listdir(playlist_path):
-            if filename.endswith(".mp3"):
-                music_path = os.path.join(playlist_path, filename)
+    def load_songs_from_playlist(self, song_list):
+        self.scrollableOutput.clear_list()  # Vor dem Laden der Songs entfernen wir alle vorhandenen Elemente
+        for filename in song_list:
                 print(filename)
-                self.scrollableOutput.add_item(music_path, image_play=play_image, image_pause=pause_image)
+                self.scrollableOutput.add_item(filename, play_image, pause_image)
 
 
 

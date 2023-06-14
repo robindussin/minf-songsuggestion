@@ -5,6 +5,10 @@ from scipy.io import arff
 import subprocess
 import shutil
 import numpy as np
+from gui import App
+import customtkinter
+from PIL import Image
+import time
 
 
 amuse_path = '/home/robin/AMUSE/amuse/'
@@ -16,10 +20,15 @@ user_song_vector = []
 processed_feature_suffix = ''
 
 	
-def start(song_path):
-
+def start(song_path, app):
+        
+        global app_ref
+        app_ref = app
+        
         global processing_suffix
-        processing_suffix = '_1-9__0[true_true]__-1ms_-1ms_songsuggestion_processing.arff'
+        processing_suffix = '_1-9__1[true_true]__-1ms_-1ms_SuggestionProc04.arff'
+        global processing_suffix_user
+        processing_suffix_user = '_1-9__0[true_true]__-1ms_-1ms_SuggestionProc04.arff'
 
         # user_song processen
         global user_song_path
@@ -54,32 +63,22 @@ def process_user_song():
         infos = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/arff_infos/'
         
         extraction_list = []
-        extraction_file_list = open(infos + 'ExtractionTestFile.arff', 'r')
+        extraction_file_list = open(infos + 'FileList.arff', 'r')
         extraction_list = extraction_file_list.readlines()[:-1]
         extraction_list.append('1, \'' + user_song_path + '\'')
         extraction_file_list.close()
         
-        extraction_file_list = open(infos + 'ExtractionTestFile.arff', 'w')
+        extraction_file_list = open(infos + 'FileList.arff', 'w')
         for line in extraction_list:
                 extraction_file_list.write(line)
         extraction_file_list.close()
-        
-        processing_file_list = open(infos + 'ProcessingTestFile.arff', 'r')
-        processing_list = processing_file_list.readlines()[:-1]
-        processing_list.append('1, \'' + user_song_path + '\'')
-        processing_file_list.close()
-        
-        processing_file_list = open(infos + 'ProcessingTestFile.arff', 'w')
-        for line in processing_list:
-                processing_file_list.write(line)
-        processing_file_list.close()
         
         shutil.copyfile(templates + 'taskExtraction', tasks + 'taskExtraction')
         shutil.copyfile(templates + 'taskProcessing', tasks + 'taskProcessing')
         
         subprocess.call(['sh', './amuseStartLoop.sh'])
 	
-        user_proc, meta = arff.loadarff('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features' + user_song_path[:-4] + '/' + get_song_name_ignore_suffix(user_song_path)[:-4] + processing_suffix)
+        user_proc, meta = arff.loadarff('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features' + user_song_path[:-4] + '/' + get_song_name_ignore_suffix(user_song_path)[:-4] + processing_suffix_user)
         user_proc = np.array(list(user_proc[0])[:-3])
 	
         return user_proc
@@ -95,9 +94,9 @@ def compare_all_songs(user_song):
 
         for i in range(len(song_data)):
                 distanceEuklid = np.linalg.norm(user_song - song_data[i])
-                distances.append((get_genre(song_names[i]), get_song_name(song_names[i]), distanceEuklid))
+                distances.append((song_names[i], distanceEuklid))
         
-        distances = sorted(distances, key = lambda tup: tup[2])
+        distances = sorted(distances, key = lambda tup: tup[1])
         return distances
 
 def load_processings():
@@ -111,7 +110,7 @@ def load_processings():
                         song_path = os.path.join(genre_path, song_folder, song_folder + processing_suffix)
                         if os.path.exists(song_path):
                                 files.append(song_path)
-
+        print()
         data = []
         for arff_file in files:
                 processed_feature, meta = arff.loadarff(arff_file)
@@ -126,8 +125,23 @@ def compare_song(path):
 
 
 def display_result(result_list):
+        music_path = '/Scratch/Musikinformatik/Genres-Datensatz-15s/'
+        song_paths = []
         for distance in result_list:
-                print(distance[0], '-', distance[1], ':', str(distance[2]))
+                song_path = os.path.split(distance[0])[0]
+                rest, song_name = os.path.split(song_path)
+                genre_name = os.path.split(rest)[1]
+                full_path = os.path.join(music_path, genre_name, song_name + ".wav")
+                # print(distance[0], ':', distance[1])
+                song_paths.append(full_path)
+                
+        result_file = open('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/results/' + str(time.time()), 'w')
+        result_file.write(processing_suffix + '\n')
+        for path in song_paths:
+                result_file.write(path + '\n')
+        result_file.close()
+        
+        app_ref.load_songs_from_playlist(song_paths)
 
 
 def generate_task_files():

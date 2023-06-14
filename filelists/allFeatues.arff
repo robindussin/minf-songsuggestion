@@ -1,8 +1,6 @@
 @RELATION FileTable
 
-
 @ATTRIBUTE 'Id' NUMERIC
 @ATTRIBUTE 'Path' STRING
 
 @DATA
-1, '/home/dussin/Downloads/Bon Jovi - Livin On A Prayer_1.mp3'
