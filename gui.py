@@ -1,5 +1,4 @@
-import tkinter
-
+import tkinter as tk
 import customtkinter
 from tkinter import filedialog
 import os
@@ -8,6 +7,7 @@ import time
 from datetime import date
 import scrollableFrame
 import pygame
+import sys
 
 import song_suggestion
 
@@ -24,23 +24,52 @@ class App(customtkinter.CTk):
         # ------------------ Allgemeine Settings ------------------#
 
         self.title("2.Teilprojekt")
-        self.geometry("800x400")
+        self.geometry("1100x580")
 
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, minsize = 65)
+        self.grid_rowconfigure((1), weight=1)
+        self.columnconfigure(0, weight=1)
 
         self.configure(fg_color="white")
 
         # ------------------ Frames -------------------------#
 
+        #----------------- MenuFrame ------------------------#
+
+        self.navigatonFrame = customtkinter.CTkFrame(self, corner_radius=0, fg_color=("white", "#2e75b5"), height=50)
+        self.navigatonFrame.grid(row=0, column=0, sticky="nswe")
+        self.navigatonFrame.grid_columnconfigure(0, weight=1)
+        self.navigatonFrame.grid_rowconfigure(0, weight=1)
+
+        self.guiName = customtkinter.CTkLabel(self.navigatonFrame, text="COOLER NAME", text_color=("#CB007E", "white"),
+                                              font=customtkinter.CTkFont("Arial", 22, "bold"))
+        self.guiName.grid(row=0, column=0, pady=5, padx=15, sticky="w")
+
+        self.home_button = customtkinter.CTkButton(self.navigatonFrame, corner_radius=5 ,
+                                                   text_color="black", hover_color="gray20",width=30, text="HOME", font= customtkinter.CTkFont("Arial", 20, "bold"),command = self.home_button_event)
+        self.home_button.grid(row=0, column=1, sticky="ew",padx = 10, pady = (5,5))
+
+        self.settings_button = customtkinter.CTkButton(self.navigatonFrame, corner_radius=5 ,
+                                                       text_color="black", hover_color="gray20",width=30,text="LOG",font= customtkinter.CTkFont("Arial", 20, "bold"), command=self.settings_button_event)
+        self.settings_button.grid(row=0, column=2, sticky="ew",padx = 10, pady = (5,5))
+
+        self.notification_button = customtkinter.CTkButton(self.navigatonFrame, corner_radius=5,
+                                                           text="DIRECTORIES" ,text_color="black",hover_color="gray20", font= customtkinter.CTkFont("Arial", 20, "bold"),width=30, command=self.notification_button_event)
+        self.notification_button.grid(row=0, column=3, sticky="ew",padx = 10, pady = (5,5))
+
+
+        #HOME
+        self.homeFrame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="white")
+
+        self.homeFrame.grid_rowconfigure(0, weight=1)
+        self.homeFrame.columnconfigure(1, weight=1)
+
         # --------------- SelectionFrame ----------------#
 
-        self.selectionFrame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="white")
+        self.selectionFrame = customtkinter.CTkFrame(self.homeFrame, corner_radius=0, fg_color="white")
         self.selectionFrame.grid(row=0, column=0, sticky="nsew")
         # Grid-Configuration
-        self.selectionFrame.grid_rowconfigure((0, 1), weight=1)
-        self.selectionFrame.grid_rowconfigure(2, weight=1)
-        self.selectionFrame.grid_columnconfigure(1, weight=1)
+        self.selectionFrame.grid_rowconfigure((0, 1, 2), weight=1)
 
         # Label
         self.selectionLabel = customtkinter.CTkLabel(self.selectionFrame, width=300, text="Choose your Song!",
@@ -70,20 +99,53 @@ class App(customtkinter.CTk):
 
         # --------------- OutputFrame ----------------#
 
-        self.outputFrame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="white")
+        self.outputFrame = customtkinter.CTkFrame(self.homeFrame, corner_radius=0, fg_color="white")
         self.outputFrame.grid(row=0, column=1, sticky="nswe")
+
+        self.outputFrame.grid_columnconfigure(0, weight=1)
+        self.outputFrame.grid_rowconfigure(0, weight=1)
 
         self.scrollableOutput = scrollableFrame.ScrollableLabelButtonFrame(master=self.outputFrame, width=435,
                                                                            height=320, command=self.buttonEvent,
                                                                            corner_radius=5, fg_color="gray90")
-        self.scrollableOutput.grid(row=0, column=1, padx=10, pady=10, sticky="nswe")
+        self.scrollableOutput.grid(row=0, column=0, padx=10, pady=10, sticky="nswe")
         self.load_songs_from_playlist(play_image, pause_image)
 
         self.progressLabel = customtkinter.CTkLabel(self.outputFrame, text="Progress:", fg_color="white")
-        self.progressLabel.grid(row=1, column=1, sticky="w", padx=10)
+        self.progressLabel.grid(row=1, column=0, sticky="w", padx=10)
 
-        self.progressBar =customtkinter.CTkProgressBar(self.outputFrame, width=435, mode="determinate")
-        self.progressBar.grid(row=2, column=1, sticky="w", padx=10)
+        self.progressBar =customtkinter.CTkProgressBar(self.outputFrame, width=765, mode="determinate")
+        self.progressBar.grid(row=2, column=0, pady=(0,10), sticky="w", padx=10)
+
+
+    #LOG
+
+        self.log = customtkinter.CTkFrame(self, fg_color="white")
+        self.log.grid_columnconfigure(0, weight=1)
+        self.log.grid_rowconfigure(1, weight=1)
+
+        # Label
+        self.logLabel = customtkinter.CTkLabel(self.log, height = 50, text="Log Frame",
+                                               corner_radius=10, fg_color="gray90")
+        self.logLabel.grid(row=0, column=0, sticky="nswe", pady=10, padx=10)
+
+        self.logText = customtkinter.CTkTextbox(self.log, corner_radius=5,
+                                                fg_color="gray90")
+        self.logText.grid(row=1, column=0, padx=10, pady=10, sticky="nswe")
+
+        # Redirect stdout and stderr to the log text box
+        sys.stdout = ConsoleRedirector(self.logText)
+        sys.stderr = ConsoleRedirector(self.logText)
+    #DIR
+
+        self.dir = customtkinter.CTkFrame(self, corner_radius=0, fg_color="white")
+
+        self.dir.grid_columnconfigure(0, weight=1)
+        self.dir.grid_rowconfigure(0, weight=1)
+
+        # ----------------- Set Default Values ------------------#
+
+        self.select_frame_by_name("home")
 
     # ----------------------- methods ---------------------------------#
 
@@ -105,6 +167,39 @@ class App(customtkinter.CTk):
                 music_path = os.path.join(playlist_path, filename)
                 print(filename)
                 self.scrollableOutput.add_item(music_path, image_play=play_image, image_pause=pause_image)
+
+    def select_frame_by_name(self, name):
+        # set button color for selected button
+        self.home_button.configure(fg_color=("gray75", "gray25") if name == "home" else "transparent")
+        self.settings_button.configure(fg_color=("gray75", "gray25") if name == "settings" else "transparent")
+        self.notification_button.configure(fg_color=("gray75", "gray25") if name == "notification" else "transparent")
+
+        # show selected frame
+        if name == "home":
+            self.homeFrame.grid(row=1, column=0, sticky="nswe")
+        else:
+            self.homeFrame.grid_forget()
+        if name == "settings":
+            self.log.grid(row=1, column=0, sticky="nswe")
+        else:
+            self.log.grid_forget()
+        if name == "notification":
+            self.dir.grid(row=1, column=0, sticky="nswe")
+        else:
+            self.dir.grid_forget()
+
+    def home_button_event(self):
+        self.select_frame_by_name("home")
+
+    def settings_button_event(self):
+        self.select_frame_by_name("settings")
+
+    def notification_button_event(self):
+        self.select_frame_by_name("notification")
+
+
+
+
 
 
 
