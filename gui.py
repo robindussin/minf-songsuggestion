@@ -108,13 +108,10 @@ class App(customtkinter.CTk):
         self.scrollableOutput = scrollableFrame.ScrollableLabelButtonFrame(master=self.outputFrame, width=435,
                                                                            height=320, command=self.buttonEvent,
                                                                            corner_radius=5, fg_color="gray90")
-<<<<<<< HEAD
+
         self.scrollableOutput.grid(row=0, column=0, padx=10, pady=10, sticky="nswe")
-        self.load_songs_from_playlist(play_image, pause_image)
-=======
-        self.scrollableOutput.grid(row=0, column=1, padx=10, pady=10, sticky="nswe")
         self.load_songs_from_playlist([])
->>>>>>> 063ca543f5ac2feabb7c9233090ec8626f592201
+
 
         self.progressLabel = customtkinter.CTkLabel(self.outputFrame, text="Progress:", fg_color="white")
         self.progressLabel.grid(row=1, column=0, sticky="w", padx=10)
@@ -138,9 +135,7 @@ class App(customtkinter.CTk):
                                                 fg_color="gray90")
         self.logText.grid(row=1, column=0, padx=10, pady=10, sticky="nswe")
 
-        # Redirect stdout and stderr to the log text box
-        sys.stdout = ConsoleRedirector(self.logText)
-        sys.stderr = ConsoleRedirector(self.logText)
+
     #DIR
 
         self.dir = customtkinter.CTkFrame(self, corner_radius=0, fg_color="white")
