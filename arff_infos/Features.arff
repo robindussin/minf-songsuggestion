@@ -1,0 +1,20 @@
+@RELATION FeatureTable
+
+@ATTRIBUTE 'Id' STRING
+@ATTRIBUTE 'Description' STRING
+@ATTRIBUTE 'ExtractorId' NUMERIC
+@ATTRIBUTE 'WindowSize' NUMERIC
+@ATTRIBUTE 'StepSize' NUMERIC
+@ATTRIBUTE 'Dimensions' NUMERIC
+@ATTRIBUTE 'FeatureType' {'WindowedNumeric','WindowedNumeric','WindowedNumeric','WindowedNumeric','WindowedNumeric'}
+
+@DATA
+'0','Zero-crossing rate',0,512,512,1,'WindowedNumeric'
+'15','Spectral irregularity',4,512,512,1,'WindowedNumeric'
+'16','Spectral bandwidth',1,512,512,1,'WindowedNumeric'
+'39','Mel frequency cepstral coefficients - MIR Toolbox',4,512,512,13,'WindowedNumeric'
+'204','Chroma vector',1,512,512,24,'WindowedNumeric'
+'252','Semitone spectrum - NNLS',7,2048,2048,85,'WindowedNumeric'
+'254','Harmonic change - NNLS',7,2048,2048,1,'WindowedNumeric'
+'257','Number of different chords in 10s',7,220500,220500,1,'WindowedNumeric'
+'418','Rhythmic clarity',4,66150,66150,1,'WindowedNumeric'

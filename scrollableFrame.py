@@ -44,6 +44,9 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
                 self.play_button_list.remove(play_button)
                 self.pause_button_list.remove(pause_button)
                 return
+    def clear_list(self):
+        self.label_list = []
+        self.button_list = []
 
     def play_song(self, idx):
         print(idx)
