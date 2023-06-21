@@ -199,7 +199,7 @@ class App(customtkinter.CTk):
         self.select_frame_by_name("notification")
 
     def slider_event(self, value):
-        scrollableFrame.updateSong(value)
+        self.scrollableOutput.updateSong(value, self.filepath)
 
 
 
