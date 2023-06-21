@@ -10,8 +10,13 @@
 
 @DATA
 '0','Zero-crossing rate',0,512,512,1,'WindowedNumeric'
+'7','Normalized energy of harmonic components',2,512,512,1,'WindowedNumeric'
 '15','Spectral irregularity',4,512,512,1,'WindowedNumeric'
 '16','Spectral bandwidth',1,512,512,1,'WindowedNumeric'
-'39','Mel frequency cepstral coefficients - MIR Toolbox',4,512,512,13,'WindowedNumeric'
+'20','Spectral flatness measure',1,512,512,4,'WindowedNumeric'
+'23','Spectral brightness',4,512,512,1,'WindowedNumeric'
+'24','Sensory roughness',4,1024,1024,1,'WindowedNumeric'
+'28','Mel frequency cepstral coefficients',0,512,512,13,'WindowedNumeric'
 '204','Chroma vector',1,512,512,24,'WindowedNumeric'
+'402','First relative periodicity amplitude peak',0,512,512,1,'WindowedNumeric'
 '418','Rhythmic clarity',4,66150,66150,1,'WindowedNumeric'

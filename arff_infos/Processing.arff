@@ -11,4 +11,4 @@
 @ATTRIBUTE 'FeatureDescription' STRING
 
 @DATA
-'/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/arff_infos/FileList.arff','RAW_FEATURE_LIST','/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/arff_infos/Features.arff','1-9','MILLISECONDS',-1,-1,'0[true_true]','SuggestionProc04'
+'/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/arff_infos/FileList.arff','RAW_FEATURE_LIST','/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/arff_infos/Features.arff','1-9','MILLISECONDS',-1,-1,'0[true_true]','proc03'

@@ -13,7 +13,7 @@ from threading import Thread
 
 
 amuse_path = '/home/fpss23/gruppe04/workspace_fachprojekt/AMUSE/amuse/'
-amuse_workspace = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse_workspace/'
+amuse_workspace = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/'
 proc_features_path = amuse_workspace + 'Processed_Features/'
 
 user_song_vector = []
@@ -27,9 +27,9 @@ def start(song_path, app):
         app_ref = app
         
         global processing_suffix
-        processing_suffix = '_1-9__1[true_true]__-1ms_-1ms_SuggestionProc04.arff'
+        processing_suffix = '_1-9__0[true_true]__-1ms_-1ms_proc03.arff'
         global processing_suffix_user
-        processing_suffix_user = '_1-9__0[true_true]__-1ms_-1ms_SuggestionProc04.arff'
+        processing_suffix_user = '_1-9__0[true_true]__-1ms_-1ms_proc03.arff'
 
         # user_song processen
         global user_song_path
@@ -62,7 +62,7 @@ def get_genre(filename):
 
 
 def user_proc_done():
-        proc_path = amuse_workspace + 'Processed_Features', user_song_path + processing_suffix_user
+        proc_path = amuse_workspace + 'Processed_Features' + user_song_path[:-4] + '/' + get_song_name_ignore_suffix(user_song_path)[:-4] + processing_suffix_user
         print('User Processing Path: ' + proc_path)
         return os.path.exists(proc_path)
 
@@ -87,15 +87,19 @@ def process_user_song():
         shutil.copyfile(templates + 'taskExtraction', tasks + 'taskExtraction')
         shutil.copyfile(templates + 'taskProcessing', tasks + 'taskProcessing')
         
-        thread = Thread(target = start_amuse)
-        thread.start()
-        print("Started Amuse")
+        new_processing = False
+        if not user_proc_done():
+                new_processing = True
+                thread = Thread(target = start_amuse)
+                thread.start()
+                print("Started Amuse")
         
         while(not user_proc_done()):
                 time.sleep(3)
         
-        shutil.copyfile('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/stop_loop', os.path.join(tasks, 'stop_loop'))
-	
+        if new_processing:
+                shutil.copyfile('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/stop_loop', tasks + 'stop_loop')
+		
         user_proc, meta = arff.loadarff('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features' + user_song_path[:-4] + '/' + get_song_name_ignore_suffix(user_song_path)[:-4] + processing_suffix_user)
         user_proc = np.array(list(user_proc[0])[:-3])
 	
@@ -153,7 +157,7 @@ def display_result(result_list):
                 song_paths.append(full_path)
                 
         result_file = open('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/results/' + str(time.time()), 'w')
-        result_file.write(processing_suffix + '\n')
+        result_file.write(processing_suffix + ' ' + user_song_path + '\n')
         for path in song_paths:
                 result_file.write(path + '\n')
         result_file.close()
