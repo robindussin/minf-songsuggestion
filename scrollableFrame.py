@@ -57,3 +57,6 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
 
     def pause_song(self, idx):
         pygame.mixer.music.pause()
+
+    def updateSong(self, value):
+        pygame.mixer_music.set_pos(value*pygame.mixer.Sound.get_length())

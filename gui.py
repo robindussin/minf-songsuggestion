@@ -8,6 +8,7 @@ from datetime import date
 import scrollableFrame
 import pygame
 import sys
+from threading import Thread
 
 import song_suggestion
 
@@ -116,7 +117,7 @@ class App(customtkinter.CTk):
         self.progressLabel = customtkinter.CTkLabel(self.outputFrame, text="Progress:", fg_color="white")
         self.progressLabel.grid(row=1, column=0, sticky="w", padx=10)
 
-        self.progressBar =customtkinter.CTkProgressBar(self.outputFrame, width=765, mode="determinate")
+        self.progressBar =customtkinter.CTkSlider(self.outputFrame, width=765, command=self.slider_event)
         self.progressBar.grid(row=2, column=0, pady=(0,10), sticky="w", padx=10)
 
 
@@ -134,6 +135,7 @@ class App(customtkinter.CTk):
         self.logText = customtkinter.CTkTextbox(self.log, corner_radius=5,
                                                 fg_color="gray90")
         self.logText.grid(row=1, column=0, padx=10, pady=10, sticky="nswe")
+        self.logText.configure(state="disable")
 
 
     #DIR
@@ -156,6 +158,7 @@ class App(customtkinter.CTk):
 
     def StartEvent(self):
         song_suggestion.start(self.filepath, self)
+
 
     def buttonEvent(self):
         print("test")
@@ -195,9 +198,18 @@ class App(customtkinter.CTk):
     def notification_button_event(self):
         self.select_frame_by_name("notification")
 
+    def slider_event(self, value):
+        scrollableFrame.updateSong(value)
 
 
 
+"""
+    def insertLog(self, text):
+        global row
+        row = 0.0
+        self.logText.insert(str(row),text)
+        row = row + 1
+"""
 
 
 
