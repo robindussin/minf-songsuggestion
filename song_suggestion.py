@@ -9,10 +9,11 @@ from gui import App
 import customtkinter
 from PIL import Image
 import time
+from threading import Thread
 
 
-amuse_path = '/home/robin/AMUSE/amuse/'
-amuse_workspace = '/home/robin/amuse_workspace/'
+amuse_path = '/home/fpss23/gruppe04/workspace_fachprojekt/AMUSE/amuse/'
+amuse_workspace = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse_workspace/'
 proc_features_path = amuse_workspace + 'Processed_Features/'
 
 user_song_vector = []
@@ -44,6 +45,10 @@ def start(song_path, app):
         display_result(all_distances)
 	
 	
+def start_amuse():
+        subprocess.call(['sh', './amuseStartLoop.sh'])
+        
+        
 def get_song_name(filename):
 	path, filename = os.path.split(filename)
 	filename = filename[:-len(processing_suffix)]
@@ -54,7 +59,13 @@ def get_song_name_ignore_suffix(filename):
  
 def get_genre(filename):
         return os.path.split(os.path.split(os.path.split(filename)[0])[0])[1]
-	
+
+
+def user_proc_done():
+        proc_path = amuse_workspace + 'Processed_Features', user_song_path + processing_suffix_user
+        print('User Processing Path: ' + proc_path)
+        return os.path.exists(proc_path)
+
 # Processe user_song und gebe Feature-Vektor zurück
 def process_user_song():
 	# Vergleichs-Song Features extrahieren
@@ -76,7 +87,14 @@ def process_user_song():
         shutil.copyfile(templates + 'taskExtraction', tasks + 'taskExtraction')
         shutil.copyfile(templates + 'taskProcessing', tasks + 'taskProcessing')
         
-        subprocess.call(['sh', './amuseStartLoop.sh'])
+        thread = Thread(target = start_amuse)
+        thread.start()
+        print("Started Amuse")
+        
+        while(not user_proc_done()):
+                time.sleep(3)
+        
+        shutil.copyfile('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/stop_loop', os.path.join(tasks, 'stop_loop'))
 	
         user_proc, meta = arff.loadarff('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features' + user_song_path[:-4] + '/' + get_song_name_ignore_suffix(user_song_path)[:-4] + processing_suffix_user)
         user_proc = np.array(list(user_proc[0])[:-3])
@@ -100,7 +118,6 @@ def compare_all_songs(user_song):
         return distances
 
 def load_processings():
-        	
         path = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features/Genres-Datensatz-15s/'
 
         files = []
