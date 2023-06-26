@@ -155,10 +155,15 @@ def load_processings():
 	        
         return (files, data)
 
+
 # Ergebnisse in GUI darstellen
 def display_result(result_list):
         music_path = '/Scratch/Musikinformatik/Genres-Datensatz-15s/'
         song_paths = []
+        song_names = []
+        interprets = []
+        genres = []
+        distances = []
         for distance in result_list:
                 song_path = os.path.split(distance[0])[0]
                 rest, song_name = os.path.split(song_path)
@@ -166,6 +171,10 @@ def display_result(result_list):
                 full_path = os.path.join(music_path, genre_name, song_name + ".wav")
                 # print(distance[0], ':', distance[1])
                 song_paths.append(full_path)
+                song_names.append(song_name.split('-')[1])
+                interprets.append(song_name.split('-')[0])
+                genres.append(genre_name)
+                distances.append(distance[1])
                 
         result_file = open('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/results/' + str(time.time()), 'w')
         result_file.write(processing_suffix + ' ' + user_song_path + '\n')
@@ -173,4 +182,5 @@ def display_result(result_list):
                 result_file.write(path + '\n')
         result_file.close()
         
-        app_ref.load_songs_from_playlist(song_paths)
+        result_dict = {'song_paths': song_paths, 'song_names': song_names, 'interprets': interprets, 'genres': genres, 'distances': distances}
+        app_ref.load_songs_from_playlist(result_dict)

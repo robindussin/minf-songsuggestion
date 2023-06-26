@@ -111,7 +111,7 @@ class App(customtkinter.CTk):
                                                                            corner_radius=5, fg_color="gray90")
 
         self.scrollableOutput.grid(row=0, column=0, padx=10, pady=10, sticky="nswe")
-        self.load_songs_from_playlist([])
+        self.load_songs_from_playlist({'song_paths': [], 'song_names': [], 'interprets': [], 'genres': [], 'distances': []})
 
 
         self.progressLabel = customtkinter.CTkLabel(self.outputFrame, text="Progress:", fg_color="white")
@@ -163,11 +163,16 @@ class App(customtkinter.CTk):
     def buttonEvent(self):
         print("test")
 
-    def load_songs_from_playlist(self, song_list):
+    def load_songs_from_playlist(self, songs_info):
         self.scrollableOutput.clear_list()  # Vor dem Laden der Songs entfernen wir alle vorhandenen Elemente
-        for filename in song_list:
-                print(filename)
-                self.scrollableOutput.add_item(filename, play_image, pause_image)
+        for i in range(len(songs_info.get('song_paths'))):
+                song_path = songs_info['song_paths'][i]
+                song_name = songs_info['song_names'][i]
+                interpret = songs_info['interprets'][i]
+                genre = songs_info['genres'][i]
+                distance = songs_info['distances'][i]
+                print(genre, '-', song_name, '(' + interpret + ')', ':', distance)
+                self.scrollableOutput.add_item(song_path, song_name, interpret, genre, distance, play_image, pause_image)
 
     def select_frame_by_name(self, name):
         # set button color for selected button
