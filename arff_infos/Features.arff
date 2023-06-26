@@ -6,7 +6,7 @@
 @ATTRIBUTE 'WindowSize' NUMERIC
 @ATTRIBUTE 'StepSize' NUMERIC
 @ATTRIBUTE 'Dimensions' NUMERIC
-@ATTRIBUTE 'FeatureType' {'WindowedNumeric','WindowedNumeric','WindowedNumeric','WindowedNumeric','WindowedNumeric'}
+@ATTRIBUTE 'FeatureType' {'WindowedNumeric'}
 
 @DATA
 '0','Zero-crossing rate',0,512,512,1,'WindowedNumeric'
