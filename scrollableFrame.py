@@ -23,8 +23,8 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
         filename = os.path.basename(music_path)
         musicLabel = customtkinter.CTkLabel(self, text=filename,padx=5, anchor="w")
 
-        play_button = customtkinter.CTkButton(self, text="",fg_color="gray70",hover_color="gray20", image=image_play, command=lambda idx=len(self.label_list) - 1: self.play_song(music_path))
-        pause_button = customtkinter.CTkButton(self, text="",fg_color="gray70", hover_color="gray20", image=image_pause, command=lambda idx=len(self.label_list) - 1: self.pause_song(music_path))
+        play_button = customtkinter.CTkButton(self, width=15, text="",fg_color="gray70",hover_color="gray20", image=image_play, command=lambda idx=len(self.label_list) - 1: self.play_song(music_path))
+        pause_button = customtkinter.CTkButton(self, width=15, text="",fg_color="gray70", hover_color="gray20", image=image_pause, command=lambda idx=len(self.label_list) - 1: self.pause_song(music_path))
 
         musicLabel.grid(row=len(self.label_list), column=0, pady=(0, 10), sticky="w")
         play_button.grid(row=int(len(self.button_list)/2), column=1, pady=(0, 10), padx=5)

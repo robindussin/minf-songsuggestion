@@ -20,9 +20,33 @@ user_song_vector = []
 
 processed_feature_suffix = ''
 
+
+
+def start_amuse():
+        subprocess.call(['sh', './amuseStartLoop.sh'])
+
+# ------------------- Hilfsfunktionen ------------------- #
+
+# Gibt einfach nur Dateinamen/letzten Teil des Pfades zurück
+def get_song_name_ignore_suffix(filename):
+	return os.path.split(filename)[1]
+
+# Gibt Genre eines Songs aus Datenbank zurück (anhand der Ordnerstruktur)
+def get_genre(filename):
+        return os.path.split(os.path.split(os.path.split(filename)[0])[0])[1]
+
+# Gibt Pfad der Processing-Datei des User-Songs zurück
+def get_processing_path():
+        return amuse_workspace + 'Processed_Features' + user_song_path[:-4] + '/' + get_song_name_ignore_suffix(user_song_path)[:-4] + processing_suffix_user
+
+# Gibt zurück, ob Processing-Datei des User-Songs existiert
+def user_proc_done():
+        return os.path.exists(get_processing_path())
+
+
 	
+# Starte User-Song-Verarbeitung, Vergleich der Songs und Darstellung der Ergebnisse
 def start(song_path, app):
-        
         global app_ref
         app_ref = app
         
@@ -39,32 +63,13 @@ def start(song_path, app):
                 return
         user_song_vector = process_user_song()
 
+        # Welche Elemente der Feature-Vektoren/welche Songfenster sollen verglichen werden?
+        array_elements = list(range(len(user_song_vector)))
         # Distanz des user_songs zu allen anderen Songs berechnen
-        all_distances = compare_all_songs(user_song_vector)
+        all_distances = compare_all_songs(user_song_vector, array_elements)
 
         display_result(all_distances)
-	
-	
-def start_amuse():
-        subprocess.call(['sh', './amuseStartLoop.sh'])
-        
-        
-def get_song_name(filename):
-	path, filename = os.path.split(filename)
-	filename = filename[:-len(processing_suffix)]
-	return filename
 
-def get_song_name_ignore_suffix(filename):
-	return os.path.split(filename)[1]
- 
-def get_genre(filename):
-        return os.path.split(os.path.split(os.path.split(filename)[0])[0])[1]
-
-
-def user_proc_done():
-        proc_path = amuse_workspace + 'Processed_Features' + user_song_path[:-4] + '/' + get_song_name_ignore_suffix(user_song_path)[:-4] + processing_suffix_user
-        print('User Processing Path: ' + proc_path)
-        return os.path.exists(proc_path)
 
 # Processe user_song und gebe Feature-Vektor zurück
 def process_user_song():
@@ -100,27 +105,37 @@ def process_user_song():
         if new_processing:
                 shutil.copyfile('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/stop_loop', tasks + 'stop_loop')
 		
-        user_proc, meta = arff.loadarff('/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features' + user_song_path[:-4] + '/' + get_song_name_ignore_suffix(user_song_path)[:-4] + processing_suffix_user)
+        user_proc, meta = arff.loadarff(get_processing_path())
         user_proc = np.array(list(user_proc[0])[:-3])
 	
         return user_proc
-	
-	
+
+
 # Gebe Liste von Tupeln (Song-Pfad, Distanz) zurück
 # z.B. [("Jazz/xyz.wav", 0.35), ("Blues/abc.wav", 0.2)]
-def compare_all_songs(user_song):
+# Song-Vektoren liegen alle als NumPy-Arrays vor (die letzten 3 "unnötigen" Zeilen sind schon entfernt)
+def compare_all_songs(user_song, array_elements):
         # berechne Distanz für alle vorliegenden Songs
         song_names, song_data = load_processings()	
 
         distances = []
 
         for i in range(len(song_data)):
-                distanceEuklid = np.linalg.norm(user_song - song_data[i])
-                distances.append((song_names[i], distanceEuklid))
+                distance = compare_song(user_song, song_data[i], array_elements)
+                distances.append((song_names[i], distance))
         
         distances = sorted(distances, key = lambda tup: tup[1])
         return distances
 
+
+# Gebe Distanz zwischen song1 und song2 zurück (song1 und song2 sind jeweils noch "vollständige" Vektoren)
+# hier kann noch Auswahl bestimmter Fenster o.Ä. vorgenommen werden (die letzten 3 "unnötigen" Zeilen wurden schon entfernt)
+def compare_song(song1, song2, array_elements):
+        print("Song Processings Vektorlänge:", len(song1)) # falls Song1-Länge != Song2-Länge schmeißt numpy Error
+        # NumPy-Arrays können mit Arrays indiziert werden (z.B. arr[[1, 2, 3]]), um Indizes 1, 2, 3 zu erhalten
+        return np.linalg.norm(song1 - song2)
+
+# Lädt vorhandene Processings der Musik aus der "Datenbank" in Array
 def load_processings():
         path = '/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/Processed_Features/Genres-Datensatz-15s/'
 
@@ -131,7 +146,7 @@ def load_processings():
                         song_path = os.path.join(genre_path, song_folder, song_folder + processing_suffix)
                         if os.path.exists(song_path):
                                 files.append(song_path)
-        print()
+        
         data = []
         for arff_file in files:
                 processed_feature, meta = arff.loadarff(arff_file)
@@ -140,11 +155,7 @@ def load_processings():
 	        
         return (files, data)
 
-# Gebe Distanz zwischen Song in path und user_song zurück
-def compare_song(path):
-	pass
-
-
+# Ergebnisse in GUI darstellen
 def display_result(result_list):
         music_path = '/Scratch/Musikinformatik/Genres-Datensatz-15s/'
         song_paths = []
@@ -163,9 +174,3 @@ def display_result(result_list):
         result_file.close()
         
         app_ref.load_songs_from_playlist(song_paths)
-
-
-def generate_task_files():
-	pass
-
-
