@@ -1,6 +1,7 @@
 import tkinter as tk
 import customtkinter
 from tkinter import filedialog
+from tkinter import *
 import os
 from PIL import Image
 import time
@@ -9,8 +10,9 @@ import scrollableFrame
 import pygame
 import sys
 from threading import Thread
-
+import SliderManager
 import song_suggestion
+
 
 playlist_path = "/home/fpss23/gruppe04/workspace_fachprojekt/amuse-workspace/minf-songsuggestion/playlist"
 image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)))
@@ -32,6 +34,7 @@ class App(customtkinter.CTk):
         self.columnconfigure(0, weight=1)
 
         self.configure(fg_color="white")
+
 
         # ------------------ Frames -------------------------#
 
@@ -106,22 +109,22 @@ class App(customtkinter.CTk):
         self.outputFrame.grid_columnconfigure(0, weight=1)
         self.outputFrame.grid_rowconfigure(0, weight=1)
 
-        self.scrollableOutput = scrollableFrame.ScrollableLabelButtonFrame(master=self.outputFrame, width=435,
+        self.scrollableOutput = scrollableFrame.ScrollableLabelButtonFrame(self, master=self.outputFrame, width=435,
                                                                            height=320, command=self.buttonEvent,
                                                                            corner_radius=5, fg_color="gray90")
 
         self.scrollableOutput.grid(row=0, column=0, padx=10, pady=10, sticky="nswe")
         self.load_songs_from_playlist({'song_paths': [], 'song_names': [], 'interprets': [], 'genres': [], 'distances': []})
 
-
         self.progressLabel = customtkinter.CTkLabel(self.outputFrame, text="Progress:", fg_color="white")
         self.progressLabel.grid(row=1, column=0, sticky="w", padx=10)
 
-        self.progressBar =customtkinter.CTkSlider(self.outputFrame, width=765, command=self.slider_event)
-        self.progressBar.grid(row=2, column=0, pady=(0,10), sticky="w", padx=10)
+        self.progressBar = customtkinter.CTkSlider(self.outputFrame, width=765, from_=0, to=100,
+                                                   command=self.slider_event)
+        self.progressBar.grid(row=2, column=0, pady=(0, 10), sticky="w", padx=10)
+        self.progressBar.set(0)
 
-
-    #LOG
+        #LOG
 
         self.log = customtkinter.CTkFrame(self, fg_color="white")
         self.log.grid_columnconfigure(0, weight=1)
@@ -145,6 +148,10 @@ class App(customtkinter.CTk):
         self.dir.grid_columnconfigure(0, weight=1)
         self.dir.grid_rowconfigure(0, weight=1)
 
+        #self.test = customtkinter.CTkButton(self, text="test", command=lambda: self.openNewWindow("Das ist ein Fehler!"))
+
+        #self.test.grid(row=0, column = 0)
+
         # ----------------- Set Default Values ------------------#
 
         self.select_frame_by_name("home")
@@ -156,8 +163,20 @@ class App(customtkinter.CTk):
         filename = os.path.basename(self.filepath)
         self.musicName.configure(text="Chosen Song: " + filename)
 
+
+
+
     def StartEvent(self):
-        song_suggestion.start(self.filepath, self)
+        pygame.mixer.init()
+        self.length = pygame.mixer.Sound(self.filepath)
+        song_length = self.length.get_length()  # Funktion zum Abrufen der Länge des Songs
+        if song_length > 1 * 60:  # Überprüfung, ob die Länge länger als 8 Minuten ist (in Sekunden)
+            self.musicName.configure(text="Chosen Song: ")
+            error_message = "Das ausgewählte Lied ist länger als 8 Minuten!"
+            self.openNewWindow(error_message)
+            self.filepath = ""
+        else:
+            song_suggestion.start(self.filepath, self)
 
 
     def buttonEvent(self):
@@ -173,6 +192,20 @@ class App(customtkinter.CTk):
                 distance = songs_info['distances'][i]
                 print(genre, '-', song_name, '(' + interpret + ')', ':', distance)
                 self.scrollableOutput.add_item(song_path, song_name, interpret, genre, distance, play_image, pause_image)
+
+    def openNewWindow(self, text = None):
+
+        newWindow = Toplevel()
+        self.text = text
+        newWindow.title("Error-Meldung")
+        newWindow.geometry("200x200")
+
+
+        self.Error = customtkinter.CTkLabel(newWindow,corner_radius=10, fg_color="gray90", text= text)
+        self.Error.grid(row=0, column = 0, padx=20, pady = 20)
+
+        self.agree = customtkinter.CTkButton(newWindow, fg_color="gray70", hover_color="gray20", text="Okay", command = newWindow.destroy)
+        self.agree.grid(row=1, column = 0, padx = 5, pady = 5)
 
     def select_frame_by_name(self, name):
         # set button color for selected button
@@ -204,7 +237,12 @@ class App(customtkinter.CTk):
         self.select_frame_by_name("notification")
 
     def slider_event(self, value):
+        SliderManager.slider_active = True
         self.scrollableOutput.updateSong(value, self.filepath)
+
+
+    def sliderUpdate(self, progress):
+        self.progressBar.set(progress)
 
 
 
