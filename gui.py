@@ -170,7 +170,7 @@ class App(customtkinter.CTk):
         pygame.mixer.init()
         self.length = pygame.mixer.Sound(self.filepath)
         song_length = self.length.get_length()  # Funktion zum Abrufen der Länge des Songs
-        if song_length > 1 * 60:  # Überprüfung, ob die Länge länger als 8 Minuten ist (in Sekunden)
+        if song_length > 8 * 60:  # Überprüfung, ob die Länge länger als 8 Minuten ist (in Sekunden)
             self.musicName.configure(text="Chosen Song: ")
             error_message = "Das ausgewählte Lied ist länger als 8 Minuten!"
             self.openNewWindow(error_message)
@@ -186,7 +186,7 @@ class App(customtkinter.CTk):
         self.scrollableOutput.clear_list()  # Vor dem Laden der Songs entfernen wir alle vorhandenen Elemente
         for i in range(len(songs_info.get('song_paths'))):
                 song_path = songs_info['song_paths'][i]
-                song_name = songs_info['song_names'][i]
+                song_name = str(i + 1) + '. ' + songs_info['song_names'][i]
                 interpret = songs_info['interprets'][i]
                 genre = songs_info['genres'][i]
                 distance = songs_info['distances'][i]
