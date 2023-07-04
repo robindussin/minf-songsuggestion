@@ -190,7 +190,7 @@ class App(customtkinter.CTk):
                 interpret = songs_info['interprets'][i]
                 genre = songs_info['genres'][i]
                 distance = songs_info['distances'][i]
-                print(genre, '-', song_name, '(' + interpret + ')', ':', distance)
+                # print(genre, '-', song_name, '(' + interpret + ')', ':', distance)
                 self.scrollableOutput.add_item(song_path, song_name, interpret, genre, distance, play_image, pause_image)
 
     def openNewWindow(self, text = None):
