@@ -94,8 +94,6 @@ def process_user_song(array_elements):
                 extraction_file_list.write(line)
         extraction_file_list.close()
         
-        shutil.copyfile(templates + 'taskExtraction', tasks + 'taskExtraction')
-        shutil.copyfile(templates + 'taskProcessing', tasks + 'taskProcessing')
 
         # Falls Processing-File schon existiert, muss Amuse garnicht gestartet werden
         new_processing = False
@@ -104,6 +102,9 @@ def process_user_song(array_elements):
                 thread = Thread(target = start_amuse)
                 thread.start()
                 print("Started Amuse")
+                
+                shutil.copyfile(templates + 'taskExtraction', tasks + 'taskExtraction')
+                shutil.copyfile(templates + 'taskProcessing', tasks + 'taskProcessing')
         
         while(not user_proc_done()):
                 time.sleep(3)
