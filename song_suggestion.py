@@ -94,8 +94,6 @@ def process_user_song(array_elements):
                 extraction_file_list.write(line)
         extraction_file_list.close()
         
-        shutil.copyfile(templates + 'taskExtraction', tasks + 'taskExtraction')
-        shutil.copyfile(templates + 'taskProcessing', tasks + 'taskProcessing')
 
         # Falls Processing-File schon existiert, muss Amuse garnicht gestartet werden
         new_processing = False
@@ -104,6 +102,9 @@ def process_user_song(array_elements):
                 thread = Thread(target = start_amuse)
                 thread.start()
                 print("Started Amuse")
+                
+                shutil.copyfile(templates + 'taskExtraction', tasks + 'taskExtraction')
+                shutil.copyfile(templates + 'taskProcessing', tasks + 'taskProcessing')
         
         while(not user_proc_done()):
                 time.sleep(3)
@@ -128,7 +129,6 @@ def compare_all_songs(user_song, array_elements):
         distances = []
         total_distances = 0
         for i in range(len(song_data)):
-                print(song_data[i])
                 distance = compare_song(user_song, song_data[i])
                 total_distances += distance
                 distances.append((song_names[i], distance))
@@ -142,7 +142,6 @@ def compare_all_songs(user_song, array_elements):
 # Gebe Distanz zwischen song1 und song2 zurück (song1 und song2 sind jeweils noch "vollständige" Vektoren)
 # hier kann noch Auswahl bestimmter Fenster o.Ä. vorgenommen werden (die letzten 3 "unnötigen" Zeilen wurden schon entfernt)
 def compare_song(song1, song2):
-        print("Song Processings Vektorlänge:", len(song1)) # falls Song1-Länge != Song2-Länge schmeißt numpy Error
         # NumPy-Arrays können mit Arrays indiziert werden (z.B. arr[[1, 2, 3]]), um Indizes 1, 2, 3 zu erhalten
         return np.linalg.norm(song1 - song2)
 
@@ -195,9 +194,14 @@ def display_result(result_list):
                 genre_name = os.path.split(rest)[1]
                 full_path = os.path.join(music_path, genre_name, song_name + ".wav")
                 # print(distance[0], ':', distance[1])
+                # print(full_path)
                 song_paths.append(full_path)
-                song_names.append(song_name.split('-')[1])
-                interprets.append(song_name.split('-')[0])
+                if len(song_name.split('-')) > 1:
+                        song_names.append(song_name.split('-')[1])
+                        interprets.append(song_name.split('-')[0])
+                else:
+                        song_names.append(song_name)
+                        interprets.append(song_name)
                 genres.append(genre_name)
                 distances.append(distance[1])
                 
@@ -207,5 +211,6 @@ def display_result(result_list):
                 result_file.write(path + '\n')
         result_file.close()
         
-        result_dict = {'song_paths': song_paths, 'song_names': song_names, 'interprets': interprets, 'genres': genres, 'distances': distances}
+        list_size = 50
+        result_dict = {'song_paths': song_paths[:list_size], 'song_names': song_names[:list_size], 'interprets': interprets[:list_size], 'genres': genres[:list_size], 'distances': distances[:list_size]}
         app_ref.load_songs_from_playlist(result_dict)
