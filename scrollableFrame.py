@@ -3,6 +3,8 @@ from PIL import Image
 import os
 import pygame
 import SliderManager
+import time
+from mutagen.mp3 import MP3
 
 
 
@@ -10,6 +12,7 @@ import SliderManager
 class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
+
 
     def __init__(self,app, master, command=None, **kwargs ):
         super().__init__(master, **kwargs)
@@ -56,7 +59,10 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
         self.sound = pygame.mixer.Sound(idx)
         pygame.mixer.music.load(idx)
         pygame.mixer.music.play()
-        self.update_slider()
+        self.play_time()
+        slider_position = int(self.sound.get_length())
+        self.app.progressBar.configure(to=slider_position)
+
 
     def pause_song(self, idx):
         pygame.mixer.music.pause()
@@ -65,13 +71,29 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
     def updateSong(self, value, filepath):
         pygame.mixer_music.set_pos(value * self.sound.get_length() / 100)
 
-    def update_slider(self):
-        if not SliderManager.slider_active:
-            song_length = self.sound.get_length()
-            if pygame.mixer.music.get_busy():
-                elapsed_time = pygame.mixer.music.get_pos() / 100  # in seconds
-                progress = elapsed_time / song_length
-                self.app.sliderUpdate(progress)
 
-                # Rufe die Methode erneut nach 100 Millisekunden auf
-                self.after(100, self.update_slider)
+    def play_time(self):
+        current_time = pygame.mixer.music.get_pos() / 1000
+
+
+
+        converted_time = time.strftime("%M:%S", time.gmtime(current_time))
+
+
+        song_length = self.sound.get_length()
+
+        converted_song_length = time.strftime("%M:%S", time.gmtime(song_length))
+
+
+
+        self.app.progressBar.set(int(current_time))
+
+        self.app.progressBar.after(1000, self.play_time)
+
+    def slide(self,x):
+        pass
+
+
+
+
+

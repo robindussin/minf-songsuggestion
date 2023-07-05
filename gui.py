@@ -120,9 +120,16 @@ class App(customtkinter.CTk):
         self.progressLabel.grid(row=1, column=0, sticky="w", padx=10)
 
         self.progressBar = customtkinter.CTkSlider(self.outputFrame, width=765, from_=0, to=100,
-                                                   command=self.slider_event)
+                                                   command=self.slide)
         self.progressBar.grid(row=2, column=0, pady=(0, 10), sticky="w", padx=10)
         self.progressBar.set(0)
+
+      #  self.progressTime = customtkinter.CTkLabel(self.outputFrame, text = "", fg_color="white")
+       # self.progressTime.grid(row=3, column=0,pady=(0, 10), sticky="w", padx=10 )
+
+       # self.progress = customtkinter.CTkLabel(self.outputFrame, text="0", fg_color="gray")
+        #self.progress.grid(row=4, column=0, pady=(0, 10), sticky="w", padx=10)
+
 
         #LOG
 
@@ -236,14 +243,9 @@ class App(customtkinter.CTk):
     def notification_button_event(self):
         self.select_frame_by_name("notification")
 
-    def slider_event(self, value):
-        SliderManager.slider_active = True
-        self.scrollableOutput.updateSong(value, self.filepath)
 
-
-    def sliderUpdate(self, progress):
-        self.progressBar.set(progress)
-
+    def slide(self,x):
+        self.progress.configure(text = self.progressBar.get())
 
 
 """
