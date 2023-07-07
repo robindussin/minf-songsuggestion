@@ -166,7 +166,7 @@ class App(customtkinter.CTk):
     # ----------------------- methods ---------------------------------#
 
     def open_file_dialog(self):
-        self.filepath = filedialog.askopenfilename(initialdir='/home/dussin/Downloads')
+        self.filepath = filedialog.askopenfilename(initialdir='/media/dussin')
         filename = os.path.basename(self.filepath)
         self.musicName.configure(text="Chosen Song: " + filename)
 
@@ -177,7 +177,7 @@ class App(customtkinter.CTk):
         pygame.mixer.init()
         self.length = pygame.mixer.Sound(self.filepath)
         song_length = self.length.get_length()  # Funktion zum Abrufen der Länge des Songs
-        if song_length > 8 * 60:  # Überprüfung, ob die Länge länger als 8 Minuten ist (in Sekunden)
+        if song_length > 10 * 60:  # Überprüfung, ob die Länge länger als 8 Minuten ist (in Sekunden)
             self.musicName.configure(text="Chosen Song: ")
             error_message = "Das ausgewählte Lied ist länger als 8 Minuten!"
             self.openNewWindow(error_message)

@@ -4,7 +4,6 @@ import os
 import pygame
 import SliderManager
 import time
-from mutagen.mp3 import MP3
 
 
 
